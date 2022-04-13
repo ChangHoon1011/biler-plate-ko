@@ -39,6 +39,7 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
   //요청된 이메일을 데이터베이스에서 있는지 찾는다
+  console.log("/login");
   User.findOne({ email: req.body.email }, (err, user) => {
     if (!user) {
       return res.json({
@@ -46,18 +47,20 @@ app.post("/login", (req, res) => {
         message: "제공된 이메일에 해당하는 유저가 없습니다.",
       });
     }
-
+    console.log("50");
     //요청된 이베일이 데이터베이스에 있다면 비밀번호가 맞는지 확인
+    console.log("req.body.password:", req.body.password);
     user.comparePassword(req.body.password, (err, isMatch) => {
+      console.log("isMatch:", isMatch);
       if (!isMatch)
         return res.json({
           loginSuccess: false,
           message: "비밀번호가 틀렸습니다.",
         });
-
+      console.log("58");
       user.generateToken((err, user) => {
         if (err) return res.status(400).send(err);
-
+        console.log("token 생성");
         // 토큰을 생성한단.  어디에? 쿠키, 로컬스토리지
         res
           .cookie("x_auth", user.token)
